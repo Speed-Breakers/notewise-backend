@@ -1,5 +1,6 @@
 from dataclasses import asdict, dataclass
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 import meilisearch
 import copy
 from env import MEILISEARCH_MASTER_KEY, MEILISEARCH_URI
@@ -9,7 +10,21 @@ from pdf import get_pdf_content_tags
 
 app = FastAPI(
     docs_url="/docs",
-    title="FastApp",
+    title="NoteWise V0.0.1",
+)
+
+origins = [
+    "http://localhost:3000",
+    "http://www.notewise.study",
+    "https://www.notewise.study",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Initialize MeiliSearch
