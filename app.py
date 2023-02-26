@@ -1,10 +1,11 @@
 from dataclasses import asdict, dataclass
+import io
 from uuid import uuid4
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import meilisearch
 import copy
-
+import shutil
 from pydantic import BaseModel, Field
 from env import MEILISEARCH_MASTER_KEY, MEILISEARCH_URI
 from file_upload import upload_file
@@ -44,9 +45,14 @@ async def hello():
 
 @app.post("/files")
 async def create_file(file: UploadFile):
-    file_upload = copy.deepcopy(file)
-    pdf = await add_to_meilisearch(file.filename, file.file)
-    upload_file(file_upload, pdf)
+    file_obj = io.BytesIO()
+    try:
+        with file_obj as buffer:
+            shutil.copyfileobj(upload_file.file, buffer)
+        pdf = await add_to_meilisearch(file.filename, file_obj)
+        upload_file(file_obj, pdf)
+    finally:
+        upload_file.file.close()
     return pdf
 
 
