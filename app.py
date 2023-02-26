@@ -48,11 +48,11 @@ async def create_file(file: UploadFile):
     file_obj = io.BytesIO()
     try:
         with file_obj as buffer:
-            shutil.copyfileobj(upload_file.file, buffer)
+            shutil.copyfileobj(file.file, buffer)
         pdf = await add_to_meilisearch(file.filename, file_obj)
         upload_file(file_obj, pdf)
     finally:
-        upload_file.file.close()
+        file.file.close()
     return pdf
 
 
