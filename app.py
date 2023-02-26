@@ -45,10 +45,8 @@ async def hello():
 
 @app.post("/files")
 async def create_file(file: UploadFile):
-    file_obj = io.BytesIO()
+    file_obj = io.BytesIO(file.file.read())
     try:
-        with file_obj as buffer:
-            shutil.copyfileobj(file.file, buffer)
         pdf = await add_to_meilisearch(file.filename, file_obj)
         upload_file(file_obj, pdf)
     finally:
@@ -56,7 +54,7 @@ async def create_file(file: UploadFile):
     return pdf
 
 
-async def add_to_meilisearch(filename: str, file):
+async def add_to_meilisearch(filename: str, file: io.BytesIO):
     content = await get_pdf_content_tags(filename, file)
     pdf_index = client.index("pdfs")
     pdf_page_index = client.index("pdf_pages")

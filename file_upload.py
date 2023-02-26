@@ -1,3 +1,4 @@
+import io
 from typing import BinaryIO
 import boto3
 from botocore.client import BaseClient
@@ -14,11 +15,11 @@ client: BaseClient = boto3.client(
 )
 
 
-def upload_file(file: UploadFile, pdf: PDFDocument):
+def upload_file(file: io.BytesIO, pdf: PDFDocument):
     print("Uploading file")
     client.put_object(
         Bucket="notewise",
-        Key=f"{pdf.pdf_id}/{file.filename}",
-        Body=file.file.read(),
+        Key=f"{pdf.pdf_id}/{pdf.name}",
+        Body=file,
         ACL="public-read",
     )

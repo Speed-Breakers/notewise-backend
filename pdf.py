@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from functools import partial
+import io
 from typing import BinaryIO, List, Set
 import cohere
 import PyPDF2
@@ -70,13 +71,14 @@ def fix_text(text: str) -> str:
     text = text.replace("   ", " ").replace(".", "")
     return text
 
+
 @dataclass
 class ContentTagResult:
     documents: List[TagResult]
     pdf: PDFDocument
 
 
-async def get_pdf_content_tags(pdf_name: str, file):
+async def get_pdf_content_tags(pdf_name: str, file: io.BytesIO):
     pdf_file = PyPDF2.PdfReader(file)
 
     pdf_document = PDFDocument(
