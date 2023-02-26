@@ -21,6 +21,8 @@ origins = [
     "http://localhost:3000",
     "http://www.notewise.study",
     "https://www.notewise.study",
+    "http://notewise.study",
+    "https://notewise.study",
 ]
 
 app.add_middleware(
@@ -29,6 +31,7 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["Access-Control-Allow-Origin"],
 )
 
 # Initialize MeiliSearch
@@ -63,6 +66,12 @@ async def add_to_meilisearch(filename: str, file: io.BytesIO):
     )
     task = pdf_index.add_documents(asdict(content.pdf), primary_key="pdf_id")
     return content.pdf
+
+
+def delete_all(index: str):
+    content = client.index(index)
+    content.delete_all_documents()
+    content.delete()
 
 
 class NoteItem(BaseModel):
