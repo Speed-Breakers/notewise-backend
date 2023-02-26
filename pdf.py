@@ -47,7 +47,8 @@ class TagResult:
 def gettags(
     pdf_document: PDFDocument, page_num: int, page: PyPDF2.PageObject
 ) -> TagResult:
-    prompt = page.extract_text()
+    prompt = fix_text(page.extract_text())
+
     result = TagResult.from_pdf_document(pdf_document)
     result.page_num = page_num
 
@@ -64,6 +65,10 @@ def gettags(
 
     return result
 
+
+def fix_text(text: str) -> str:
+    text = text.replace("   ", " ").replace(".", "")
+    return text
 
 @dataclass
 class ContentTagResult:

@@ -18,3 +18,5 @@ DO_SPACES_KEY: str = os.getenv("DO_SPACES_KEY", "")
 
 
 DO_SPACES_SECRET: str = os.getenv("DO_SPACES_SECRET", "")
+
+SECRET_KEY: str = os.getenv("SECRET_KEY", "")

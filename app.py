@@ -1,8 +1,11 @@
 from dataclasses import asdict, dataclass
+from uuid import uuid4
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import meilisearch
 import copy
+
+from pydantic import BaseModel, Field
 from env import MEILISEARCH_MASTER_KEY, MEILISEARCH_URI
 from file_upload import upload_file
 
@@ -58,11 +61,19 @@ async def add_to_meilisearch(filename: str, file):
     return content.pdf
 
 
-# @app.get("/tasks/{task_id}")
-# async def get_task(task_id: str):
-#     index = client.index(DEFAULT_INDEX)
-#     task = index.get_task(task_id)
-#     return task
+class NoteItem(BaseModel):
+    note_id: str = Field(default_factory=lambda: uuid4().__str__())
+    description: str
+    pdf_id: str
+    page_id: str
+    page_number: int
+
+
+@app.post("/notes")
+async def create_note(note: NoteItem):
+    note_index = client.index("notes")
+    task = note_index.add_documents(asdict(note), primary_key="note_id")
+    return note
 
 
 if __name__ == "__main__":
