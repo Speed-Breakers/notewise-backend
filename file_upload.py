@@ -21,5 +21,6 @@ def upload_file(file: io.BytesIO, pdf: PDFDocument):
         Bucket="notewise",
         Key=f"{pdf.pdf_id}/{pdf.name}",
         Body=file,
+        ContentType="application/pdf",
         ACL="public-read",
     )
